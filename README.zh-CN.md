@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md) · [English](README.en.md)
 
-面向 Hisense Q5 RLCD 平板的 Root 屏幕校色工具。当前版本为 `0.1.51`。
+面向 Hisense Q5 RLCD 平板的 Root 屏幕校色工具。
 
 ## 功能
 
