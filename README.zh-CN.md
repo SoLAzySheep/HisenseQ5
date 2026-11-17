@@ -13,21 +13,6 @@
 - 爱心按钮应用固定的推荐设置；普通调节不会改写推荐值。
 - 恢复操作会关闭本应用启用的面板模块，并恢复应用记录的系统饱和度基线，不会清除设备数据。
 
-## 设备与权限
-
-| 项目 | 当前验证信息 |
-|---|---|
-| 设备 | Hisense Q5 HITV105C / T610 |
-| 最低系统版本 | Android 8.0（API 26）；实机验证为 Android 10 |
-| 固件 | `L1721.6.01.02` |
-| 面板驱动 | `dpu-r4p0` |
-| Root | 必需；通过 Magisk 授权 |
-| 悬浮窗 | 首次使用时需授予“显示在其他应用上层”权限 |
-
-面板写入前会检查设备指纹和 DPU 版本。当前仅上述 Q5 固件经过验证；其他机型、固件和 DPU 版本不保证可用。应用没有 Shizuku 调整通道。
-
-面板写入接受的系统指纹：`Hisense/HITV105C/HITV105C:10/QP1A.190711.020/L1721.6.01.02:user/release-keys`。
-
 ## 调节范围
 
 | 参数 | 范围 |
@@ -49,22 +34,3 @@
 4. 拖动滑杆实时校色，或点击右侧数值输入绝对值；`√` 保存并应用，`×` 取消。
 5. 点击爱心应用固定推荐设置。普通滑杆调整不会修改该预设。
 
-## 设备实现说明
-
-面板控制通过 Q5 的 `/sys/class/display/dispc0/PQ/` 接口写入 CM、HSV、Gamma 和 EPF 数据，并检查模块状态。已在目标设备验证的 payload 长度分别为 CM 24 字节、HSV 1440 字节、Gamma 1536 字节、EPF 14 字节。
-
-应用根据随包厂商 XML 构造调节数据，不读取设备的二进制 Gamma 表；在此固件上读取该表会触发内核 `dpu_enhance_get` 错误。系统饱和度通过 Root 下的 SurfaceFlinger transaction `1022` 调整，与面板 DPU 控制分开。Paper7 和 TCL S8 的 MediaTek PQ 接口没有移植到 Q5。
-
-## 从源码构建
-
-需要 Windows PowerShell、JDK 17、Android SDK Platform 35、Build Tools 35.0.0，以及 `~/.android/debug.keystore`。厂商调色 XML 已包含在 `assets/pq/` 中。
-
-```powershell
-.\build.ps1 -Sdk "C:\Android\Sdk" -Jdk "C:\Java\jdk-17"
-```
-
-构建脚本会生成并签名 `build/Q5-screen-tuner-0.1.51.apk`。连接设备后可使用：
-
-```powershell
-adb install -r .\build\Q5-screen-tuner-0.1.51.apk
-```
